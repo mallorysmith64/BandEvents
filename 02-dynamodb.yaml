@@ -1,0 +1,22 @@
+---
+Description: 02-dynamodb.yaml
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  EventsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: events
+      AttributeDefinitions:
+        - AttributeName: "BandId"
+          AttributeType: "S"
+        - AttributeName: "Date"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "BandId"
+          KeyType: "HASH"
+        - AttributeName: "Date"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 6
+        WriteCapacityUnits: 2

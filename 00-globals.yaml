@@ -1,0 +1,44 @@
+---
+Description: 00-globals.yaml
+AWSTemplateFormatVersion: 2010-09-09
+Conditions:
+  InProduction:
+    Fn::Equals:
+      - !Sub ${AWS::AccountId}
+      - !Ref ProductionAccountNumber
+  InDevelopment:
+    Fn::Not:
+      - Fn::Equals:
+        - !Sub ${AWS::AccountId}
+        - !Ref ProductionAccountNumber
+
+Parameters:
+  ProductionAccountNumber:
+    Type: String
+    Default: 999999999999
+    Description: AWS production account number
+    AllowedPattern: \d{12}
+
+Resources:
+  ProductionFlag:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: /bandevent/flag/production
+      Description: "boolean flag: are we in production or not"
+      Type: String
+      Value:
+        Fn::If:
+          - InProduction
+          - true
+          - false
+  DevelopmentFlag:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: /bandevent/flag/development
+      Description: "boolean flag: are we in development or not"
+      Type: String
+      Value:
+        Fn::If:
+          - InDevelopment
+          - true
+          - false
